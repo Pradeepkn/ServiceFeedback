@@ -71,7 +71,7 @@ class ServiceRating extends State<Rating> {
                 child: Container(
                     margin: const EdgeInsets.only(bottom: 10.0, top: 50, right: 10, left: 10),
 
-                    child: new Image(image: new AssetImage('assets/images/tarentologo.png'),
+                    child: new Image(image: new AssetImage('assets/images/tarento.png'),
                         color: null, width:100, height: 100)
 
 

@@ -3,11 +3,14 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_app_sqlite_master/pages/ageSelection/gender_presenter.dart';
+import 'package:flutter_app_sqlite_master/pages/selectService/details.dart';
 import 'package:flutter_app_sqlite_master/data/database_helper.dart';
 //import 'splash.dart';
 import 'package:flutter_app_sqlite_master/models/gender.dart';
 import 'genderSelection.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 
 class AgeSelection extends StatefulWidget {
   @override
@@ -15,8 +18,11 @@ class AgeSelection extends StatefulWidget {
 }
 
 class AgeCategory extends State<AgeSelection> implements GenderSelection {
-  BuildContext _ctx;
-  bool _isLoading;
+
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer =
+  FirebaseAnalyticsObserver(analytics: analytics);
+
   final formKey = new GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final scaffoldkey = new GlobalKey<ScaffoldState>();
@@ -29,12 +35,36 @@ class AgeCategory extends State<AgeSelection> implements GenderSelection {
   bool isMenslected = false;
   bool isGenderSelected = false;
 
+  void initState() {
+    super.initState();
+    _captureCurrentScreen();
+  }
+
+  Future<void> _captureCurrentScreen() async {
+    await analytics.setCurrentScreen(
+        screenName: 'AgeSelection',
+        screenClassOverride: this.runtimeType.toString()
+    );
+  }
+
+  Future<void> _sendAnalyticsEvent(String gender) async {
+
+    await analytics.logEvent(
+      name: 'AgeSelection_Event',
+      parameters: <String, dynamic>{
+        'string': gender
+      },
+    );
+    //setMessage('logEvent succeeded');
+  }
+
   _onWomenAgeSelected(int index) {
     _menSelectedIndex = -1;
     selectedAge = womenAgeList[index];
     isMenslected = false;
     isGenderSelected = true;
     setState(() => _selectedIndex = index);
+    _sendAnalyticsEvent("WOMEN");
   }
 
   onMenAgeSelected(int index) {
@@ -43,6 +73,7 @@ class AgeCategory extends State<AgeSelection> implements GenderSelection {
     isMenslected = true;
     isGenderSelected = true;
     setState(() => _menSelectedIndex = index);
+    _sendAnalyticsEvent("MEN");
   }
 
   GenderPagePresentor _presenter;
@@ -67,7 +98,7 @@ class AgeCategory extends State<AgeSelection> implements GenderSelection {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     // TODO: implement build
-    _ctx = context;
+//    _ctx = context;
     var ageselect = isMenslected ? "MEN ($selectedAge)": "WOMEN ($selectedAge)";
     var AgeSelctionform = new Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -293,9 +324,7 @@ class AgeCategory extends State<AgeSelection> implements GenderSelection {
   @override
   void onGenderSaveSuccess(Gender gender) async {
     _showSnackBar(selectedAge);
-    setState(() {
-      _isLoading = false;
-    });
+
     var db = new DatabaseHelper();
     await db.savegender(gender);
     Navigator.of(context).pushNamed("/serviceDetails");
@@ -306,12 +335,21 @@ class AgeCategory extends State<AgeSelection> implements GenderSelection {
     Navigator.of(context).pushNamed("/serviceDetails");
     // TODO: implement onLoginError
     _showSnackBar(error);
-    setState(() {
-      _isLoading = false;
-    });
+//    setState(() {
+//      _isLoading = false;
+//    });
   }
 
   switchTonextScreen( String Age) {
+//      if(isGenderSelected) {
+//        Navigator.push(
+//          context,
+//
+//          MaterialPageRoute(builder: (context) => Details(analytics: analytics, observer: observer,)),
+//        );
+//      } else {
+//        showToast();
+//      }
     if(isGenderSelected) {
      Navigator.of(context).pushNamed("/serviceDetails");
       _presenter.selectAge(Age);

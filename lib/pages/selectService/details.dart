@@ -6,9 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_app_sqlite_master/models/UserDetail.dart';
 import 'package:flutter_app_sqlite_master/data/database_helper.dart';
-//import 'rating.dart';
 import 'package:progress_hud/progress_hud.dart';
 import 'package:flutter_app_sqlite_master/pages/selectService/detail_presenter.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() => runApp(new MaterialApp(
   title: 'Forms in Flutter',
@@ -48,14 +48,6 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
   final double itemHeight = 0;
   final double itemWidth = 0;
 
-  _verticalDivider() => BoxDecoration(
-    border: Border(
-      right: BorderSide(
-        color: Theme.of(context).dividerColor,
-        width: 0.5,
-      ),
-    ),
-  );
 
   Future<String> getJsonData() async {
     var response = await http
@@ -86,12 +78,10 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
 
   int _selectedIndex = 0;
   _onSelected(position) {
-    print('selectedIndex');
     _selectedIndex = position;
     categoryServices = categoryList[position].servicesList;
     print(categoryList.length);
     if (categoryList.length > position) {
-      print(categoryList[position].servicesList);
       categoryServices = categoryList[position].servicesList;
     }
 
@@ -107,7 +97,6 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
     setState(() {
       if (selectedServicesList.length > 0) {
         bool isValueAvailable = false;
-        print(selectedServicesList.length);
         for (int i = 0; i < selectedServicesList.length; i++) {
           if (Sname == selectedServicesList[i].servicesName) {
             SelectedServicesModel model = selectedServicesList[i];
@@ -150,7 +139,7 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
         selectedServicesList[number].count--;
         print(selectedServicesList[number].count);
       } else {
-          for (int i = 0; i <= selectedServicesList.length - 1; i++) {
+        for (int i = 0; i <= selectedServicesList.length - 1; i++) {
           if (selectedServicesList[i].servicesName == sName) {
             selectedServicesList.remove(selectedServicesList[number]);
             _onserviceIndex = null;
@@ -294,9 +283,10 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
                   child: new Container(
                     decoration: new BoxDecoration(
                         border: new Border.all(color: Colors.black)),
-                    padding: EdgeInsets.all(6.0),
-                    margin: const EdgeInsets.only(
-                        bottom: 6, right: 6, left: 6, top: 6),
+
+                    padding: new EdgeInsets.symmetric(
+                        vertical: 6.0, horizontal: 6.0),
+                    margin: EdgeInsets.symmetric(vertical: 6.0),
 //                      color: Colors.grey[50],
                     height: 350.0,
                     child: ListView.builder(
@@ -340,8 +330,7 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black),
                     ),
-                    padding: new EdgeInsets.symmetric(
-                        vertical: 6.0, horizontal: 2.0),
+
                     margin: EdgeInsets.symmetric(vertical: 6.0),
 //                      color: Colors.grey[50],
                     height: 350.0,
@@ -359,8 +348,7 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
                               children: <Widget>[
                                 new Container(
                                   child: IconButton(
-
-                                    icon: Icon(Icons.remove, size: 20),
+                                    icon: Icon(Icons.remove),
                                     onPressed: () => _removecount(
                                         position,
                                         selectedServicesList[position]
@@ -374,7 +362,7 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
                                         )),
                                   ),
                                   margin: const EdgeInsets.only(
-                                      right: 2.0, left: 1.0),
+                                      right: 5.0, left: 1.0),
                                 ),
                                 Text(selectedServicesList[position]
                                     .servicesName),
@@ -391,7 +379,7 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
                                           .count
                                           .toString(),
                                       style: new TextStyle(
-                                          color: Colors.white, fontSize: 12.0)),
+                                          color: Colors.white, fontSize: 14.0)),
                                 ),
 //                                      Text(selectedServicesList[position].count.toString()),
                               ],
@@ -407,19 +395,20 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
               ],
             ),
           ),
+
           Container(
             height: 50.0,
             width: 100.0,
             margin: const EdgeInsets.only(bottom: 10.0, right: 10, left: 10),
             child: RaisedButton(
               onPressed: () {
-             setState(() {
-               for(int k = 0; k<=selectedServicesList.length-1; k++){
-                 _presenter.serviceAdd(selectedServicesList[k].categoryId, selectedServicesList[k].categoryName, selectedServicesList[k].servicesId,
-                 selectedServicesList[k].servicesName, selectedServicesList[k].count);
-               }
+                setState(() {
+                  for(int k = 0; k<=selectedServicesList.length-1; k++){
+                    _presenter.serviceAdd(selectedServicesList[k].categoryId, selectedServicesList[k].categoryName, selectedServicesList[k].servicesId,
+                        selectedServicesList[k].servicesName, selectedServicesList[k].count);
+                  }
 
-             });
+                });
               },
               child: const Text('Next'),
             ),
@@ -460,9 +449,9 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
         _loading = !_loading;
       });
     }
-
     return body;
   }
+
   @override
   void onServiceAddSuccess(SelectedServicesModel servicesave) async {
     var db = new DatabaseHelper();
