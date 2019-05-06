@@ -29,8 +29,7 @@ android {
     compileSdkVersion 28
 
     lintOptions {
-        abortOnError false
-//        disable 'InvalidPackage'
+        disable 'InvalidPackage'
     }
 
     defaultConfig {
