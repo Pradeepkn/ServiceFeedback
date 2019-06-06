@@ -96,8 +96,6 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
         isPhoneNumberMsgHintDesabled = true;
       }
     }
-
-
     setState(() => phoneNumer);
   }
 
@@ -130,24 +128,26 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
       color: Colors.green,
     );
     var loginForm = new Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-//      onTap: () {
-////            SystemChannels.textInput.invokeMethod('TextInput.hide');
-//        FocusScope.of(context).detach();
-////            FocusScope.of(context).requestFocus(new FocusNode());
-//      },
 
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Center(
           child: Center(
             child: Center(
               child: Container(
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 padding: new EdgeInsets.all(20.0),
                 color: Colors.lightGreen[200],
                 child: new Form(
                     key: this._formKey,
                     autovalidate: _validate,
-//            height: screenSize.height / 2,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -221,7 +221,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
                                       new EdgeInsets.only(top: 10.0, bottom: 5.0)),
                             )),
                         Container(
-                          height: 288.0,
+                        height: 288.0,
                           width: 190.0,
                           padding: EdgeInsets.all(8.0),
 //                      color: Colors.yellow,
@@ -278,7 +278,7 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
                           },
                           child: new Container(
                             width: 100.0,
-                            height: 80.0,
+//                            height: 80.0,
                             child: new Text(
                               'SKIP',
                               textAlign: TextAlign.center,
@@ -304,7 +304,15 @@ class _LoginPageState extends State<LoginPage> implements LoginPageContract {
       key: scaffoldkey,
       resizeToAvoidBottomPadding: false,
       body: new Container(
-        padding: new EdgeInsets.only(top: 20.0),
+        height: MediaQuery
+            .of(context)
+            .size
+            .height,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
+//        padding: new EdgeInsets.only(top: 20.0),
         child: new GestureDetector(
           onTap: () {
 //            SystemChannels.textInput.invokeMethod('TextInput.hide');

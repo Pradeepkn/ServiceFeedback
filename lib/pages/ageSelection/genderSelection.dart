@@ -1,5 +1,4 @@
 import 'dart:core';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_app_sqlite_master/pages/ageSelection/gender_presenter.dart';
@@ -357,8 +356,8 @@ class AgeCategory extends State<AgeSelection> implements GenderSelection {
       showToast();
     }
   }
-
 }
+
 showToast() {
   Fluttertoast.showToast(
       msg: "Please select gender age",

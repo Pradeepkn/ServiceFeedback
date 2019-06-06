@@ -9,6 +9,7 @@ import 'package:flutter_app_sqlite_master/data/database_helper.dart';
 import 'package:progress_hud/progress_hud.dart';
 import 'package:flutter_app_sqlite_master/pages/selectService/detail_presenter.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter_app_sqlite_master/utils/network_util.dart';
 
 void main() => runApp(new MaterialApp(
   title: 'Forms in Flutter',
@@ -47,17 +48,26 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
   var size;
   final double itemHeight = 0;
   final double itemWidth = 0;
-
-
+  NetworkUtil _netUtil = new NetworkUtil();
+  static final BASE_URL = "http://www.mocky.io/v2/5ca1b8393700004c00899387";
+  static final LOGIN_URL = BASE_URL + "";
+  static final SERVICE_URL = BASE_URL + "";
+  static final _API_KEY = "somerandomkey";
+  Future<ServiceDetail> servicecalls() {
+    return _netUtil.get(SERVICE_URL).then((dynamic res) {
+      print(res.toString());
+      if(res["error"]) throw new Exception(res["error_msg"]);
+      return new ServiceDetail();//
+    });
+  }
+//  var store = ServiceDetail.fromJson();
   Future<String> getJsonData() async {
     var response = await http
         .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
-
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       //deepak
-      var convertDataToJson =
-      ServiceDetail.fromJson(json.decode(response.body));
+      var convertDataToJson =  ServiceDetail.fromJson(json.decode(response.body));
       var store = convertDataToJson.stores;
       for (final storeOject in store) {
         var space = storeOject.spaces;
@@ -84,7 +94,6 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
     if (categoryList.length > position) {
       categoryServices = categoryList[position].servicesList;
     }
-
     _onserviceIndex = null;
   }
 
@@ -93,7 +102,6 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
   var mycolor=Colors.white;
   _onSelectedCount(String Sname, int position) {
     _onserviceIndex = position;
-
     setState(() {
       if (selectedServicesList.length > 0) {
         bool isValueAvailable = false;
@@ -117,7 +125,6 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
               count: 1,
             ),
           );
-
         }
       } else {
         selectedServicesList.add(
@@ -161,6 +168,7 @@ class _LoginPageState extends State<Details> implements DetailPageContract {
     );
 
     setState(() {
+//      this.servicecalls();
       this.getJsonData();
       //showWidget;
     });
